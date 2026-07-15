@@ -645,8 +645,9 @@ function init(){
   document.getElementById('app').innerHTML='<div style="text-align:center;padding:60px;color:#94a3b8;font-size:14px">⏳ 데이터 불러오는 중...</div>';
   loadFromDB().then(function(dbData){
     if(dbData && dbData.teams && dbData.teams.length>0){
-      state.teams=dbData.teams.map(function(dt){
-        var base=INIT.find(function(t){return t.id===dt.id;})||{};
+      // INIT 순서 기준으로 정렬해서 불러오기
+      state.teams=INIT.map(function(base){
+        var dt=dbData.teams.find(function(t){return t.id===base.id;})||{};
         return Object.assign({},base,dt);
       });
       state.champ=dbData.champ||null;
@@ -666,7 +667,7 @@ function init(){
       if(state.edit) return;
       loadFromDB().then(function(d){
         if(d && d.teams && d.teams.length>0){
-          state.teams=d.teams.map(function(dt){var base=INIT.find(function(t){return t.id===dt.id;})||{};return Object.assign({},base,dt);});
+          state.teams=INIT.map(function(base){var dt=d.teams.find(function(t){return t.id===base.id;})||{};return Object.assign({},base,dt);});
           state.champ=d.champ||null;
           state.eliminated=d.eliminated||[];
           render();
