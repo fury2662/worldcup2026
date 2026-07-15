@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚽ 2026 월드컵 배팅</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  min-height:100vh;
+  background:#eef2f9;
+  color:#1e2232;
+  font-family:'Malgun Gothic','맑은 고딕',system-ui,sans-serif;
+  padding:0 0 60px;
+}
+.site-header{
+  background:linear-gradient(135deg,#1e3a8a 0%,#1d4ed8 60%,#3b82f6 100%);
+  color:#fff;text-align:center;padding:28px 20px 24px;
+  box-shadow:0 4px 20px rgba(30,58,138,.25);
+}
+.hd-sub{letter-spacing:5px;font-size:11px;font-weight:700;opacity:.75;margin-bottom:6px}
+.site-header h1{font-size:24px;font-weight:800;margin-bottom:4px}
+.hd-desc{font-size:12.5px;opacity:.75}
+.wrap{max-width:860px;margin:0 auto;padding:20px 16px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.stat-box{background:#fff;border-radius:14px;padding:13px 14px;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.07)}
+.stat-label{font-size:11px;color:#8a93aa;margin-bottom:5px}
+.stat-val{font-size:18px;font-weight:800}
+.info-row{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.info-bar{flex:1;padding:9px 13px;background:#fff;border:1px solid #dbeafe;border-radius:10px;font-size:12px;color:#64748b;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+button{cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;border-radius:10px;padding:8px 15px;border:none;transition:opacity .15s}
+button:hover{opacity:.85}
+.btn-edit{background:#1d4ed8;color:#fff}
+.btn-edit.on{background:#f59e0b;color:#1a1200}
+.btn-reset{background:#fff;color:#64748b;border:1px solid #d1d5db}
+.teams{display:flex;flex-direction:column;gap:14px}
+.card{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 2px 14px rgba(0,0,0,.08);display:flex;flex-wrap:wrap;border:2px solid transparent;transition:border-color .2s}
+.card.is-champ{border-color:#f59e0b;box-shadow:0 4px 20px rgba(245,158,11,.25)}
+.card-left{width:210px;flex-shrink:0;padding:18px;border-right:1px solid #f1f5f9;display:flex;flex-direction:column;gap:12px}
+.team-hd{display:flex;align-items:center;gap:10px}
+.flag-img{width:38px;height:28px;object-fit:cover;border-radius:4px;box-shadow:0 1px 4px rgba(0,0,0,.18);flex-shrink:0}
+.team-name{font-size:17px;font-weight:800;color:#1e2232}
+.team-sub{font-size:11px;color:#94a3b8}
+.champ-crown{margin-left:auto;font-size:16px}
+.payout-box{border-radius:12px;padding:12px 14px;border:1.5px solid}
+.payout-lbl{font-size:11px;color:#64748b;margin-bottom:3px}
+.payout-amt{font-size:24px;font-weight:900;line-height:1.1}
+.payout-sub{font-size:11px;color:#94a3b8;margin-top:4px}
+.prog-head{display:flex;justify-content:space-between;font-size:11px;color:#94a3b8;margin-bottom:5px}
+.prog-bg{height:6px;border-radius:99px;background:#f1f5f9}
+.prog-fill{height:100%;border-radius:99px;transition:width .3s}
+.btn-champ{width:100%;font-size:12.5px;padding:9px 14px;border-radius:10px;border:none;font-weight:700}
+.card-right{flex:1;min-width:200px;padding:18px 16px 14px;display:flex;flex-direction:column;gap:10px;background:#fafbfd}
+.members{display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start}
+.empty-msg{font-size:12px;color:#cbd5e1;padding:8px 0}
+.chip{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;padding:5px 10px;border-radius:8px;cursor:pointer;user-select:none;border:1.5px solid;transition:all .15s}
+.chip:hover{transform:scale(1.03)}
+.chip-mark{font-size:10px;opacity:.8}
+.chip-del{background:transparent;border:none;color:#f87171;cursor:pointer;font-size:12px;padding:0;line-height:1;font-weight:900;margin-left:2px}
+.add-row{display:flex;gap:6px}
+.add-input{flex:1;background:#fff;border:1.5px solid #e2e8f0;border-radius:9px;color:#1e2232;padding:7px 11px;font-size:13px;outline:none;font-family:inherit;transition:border-color .2s}
+.add-input:focus{border-color:#3b82f6}
+.champ-banner{margin-top:18px;padding:18px 22px;border-radius:16px;text-align:center;background:linear-gradient(90deg,#fffbeb,#fff);border:2px solid #f59e0b;box-shadow:0 4px 16px rgba(245,158,11,.2)}
+.champ-banner-title{font-size:13px;color:#d97706;font-weight:700;margin-bottom:5px}
+.champ-banner-main{font-size:26px;font-weight:900;color:#1e2232;margin-bottom:5px}
+.champ-banner-sub{font-size:12.5px;color:#64748b}
+@media(max-width:560px){
+  .card-left{width:100%;border-right:none;border-bottom:1px solid #f1f5f9}
+  .card-right{min-width:0}
+}
+.footer{margin-top:22px;font-size:11.5px;color:#94a3b8;text-align:center;line-height:1.9}
+/* 관리자 뱃지 */
+.site-header{position:relative}
+.admin-badge-wrap{position:absolute;top:14px;right:14px}
+.admin-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:5px 11px;border-radius:20px;cursor:pointer;border:none;font-family:inherit}
+.admin-badge.on{background:#dcfce7;color:#15803d}
+.admin-badge.off{background:rgba(255,255,255,.18);color:rgba(255,255,255,.9)}
+/* 모달 */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:9999;background:rgba(15,23,42,.5);backdrop-filter:blur(4px);align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal-box{background:#fff;border-radius:22px;padding:34px 28px 28px;width:310px;box-shadow:0 24px 64px rgba(0,0,0,.22);text-align:center}
+.modal-icon{font-size:40px;margin-bottom:12px}
+.modal-title{font-size:18px;font-weight:800;color:#1e2232;margin-bottom:4px}
+.modal-sub{font-size:12.5px;color:#94a3b8;margin-bottom:22px;line-height:1.6}
+.modal-input{width:100%;padding:12px 14px;border:1.5px solid #e2e8f0;border-radius:11px;font-size:20px;text-align:center;letter-spacing:8px;outline:none;font-family:inherit;color:#1e2232;transition:border-color .2s}
+.modal-input:focus{border-color:#1d4ed8}
+.modal-error{font-size:12px;color:#ef4444;margin-top:8px;min-height:18px}
+.modal-btns{display:flex;gap:8px;margin-top:18px}
+.mbtn-cancel{flex:1;background:#f1f5f9;color:#64748b;border:none;border-radius:11px;padding:11px;font-size:13px;font-weight:700;cursor:pointer}
+.mbtn-ok{flex:1;background:#1d4ed8;color:#fff;border:none;border-radius:11px;padding:11px;font-size:13px;font-weight:700;cursor:pointer}
+.mbtn-logout{width:100%;background:#fff7ed;color:#ea580c;border:1.5px solid #fed7aa;border-radius:11px;padding:11px;font-size:13px;font-weight:700;cursor:pointer;margin-top:10px}
+@media(max-width:480px){.admin-badge-wrap{position:static;text-align:right;margin-top:8px}}
+</style>
+</head>
+<body>
+<!-- 관리자 인증 모달 -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal-box">
+    <div id="panel-login">
+      <div class="modal-icon">🔐</div>
+      <div class="modal-title">관리자 인증</div>
+      <div class="modal-sub">수정 권한이 필요합니다<br>비밀번호를 입력해주세요</div>
+      <input class="modal-input" id="pw-input" type="password" maxlength="10"
+        placeholder="••••••" onkeydown="if(event.key==='Enter')confirmAuth()">
+      <div class="modal-error" id="pw-error"></div>
+      <div class="modal-btns">
+        <button class="mbtn-cancel" onclick="closeModal()">취소</button>
+        <button class="mbtn-ok" onclick="confirmAuth()">확인</button>
+      </div>
+    </div>
+    <div id="panel-logout" style="display:none">
+      <div class="modal-icon">🔓</div>
+      <div class="modal-title">관리자 모드</div>
+      <div class="modal-sub">현재 관리자로 로그인 중입니다<br>브라우저를 닫으면 자동 로그아웃됩니다</div>
+      <button class="mbtn-logout" onclick="doLogout()">🚪 로그아웃</button>
+      <div class="modal-btns"><button class="mbtn-ok" style="flex:1" onclick="closeModal()">닫기</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="site-header">
+  <div class="hd-sub">FIFA WORLD CUP 2026</div>
+  <h1>⚽ 최종 우승팀 맞추기 배팅</h1>
+  <p class="hd-desc">1인 참가비 10,000원 · 천원 미만은 운영진 귀속</p>
+  <div class="admin-badge-wrap">
+    <button class="admin-badge off" id="admin-badge" onclick="clickAdminBadge()">🔒 관리자</button>
+  </div>
+</div>
+<div class="wrap"><div id="app"></div></div>
+
+<script>
+const FEE=10000, STORE='wc26-v4', ADMIN_PW='12345';
+
+const INIT=[
+  {id:'fra',name:'프랑스',    flagUrl:'https://flagcdn.com/w40/fr.png',    accent:'#1d4ed8',accentBg:'#eff6ff',accentBorder:'#bfdbfe', members:[]},
+  {id:'esp',name:'스페인',    flagUrl:'https://flagcdn.com/w40/es.png',    accent:'#b45309',accentBg:'#fffbeb',accentBorder:'#fde68a', members:[]},
+  {id:'eng',name:'잉글랜드',  flagUrl:'https://flagcdn.com/w40/gb-eng.png',accent:'#0f766e',accentBg:'#f0fdfa',accentBorder:'#99f6e4', members:[]},
+  {id:'arg',name:'아르헨티나',flagUrl:'https://flagcdn.com/w40/ar.png',    accent:'#0284c7',accentBg:'#f0f9ff',accentBorder:'#bae6fd', members:[]}
+];
+
+let state={teams:load()||clone(INIT),edit:false,champ:null};
+let isAdmin=sessionStorage.getItem('wc26-admin')==='1';
+let pendingAction=null;
+
+function load(){try{const v=localStorage.getItem(STORE);return v?JSON.parse(v):null;}catch{return null;}}
+function save(){try{localStorage.setItem(STORE,JSON.stringify(state.teams));}catch{}}
+function clone(o){return JSON.parse(JSON.stringify(o));}
+function won(n){return n.toLocaleString('ko-KR')+'원';}
+function payout(team,pool){
+  const w=team.members.length;
+  if(!w)return{per:0,winners:0,house:pool};
+  const per=Math.floor(pool/w/1000)*1000;
+  return{per,winners:w,house:pool-per*w};
+}
+
+/* ── 관리자 인증 ── */
+function updateBadge(){
+  const b=document.getElementById('admin-badge');
+  if(!b)return;
+  if(isAdmin){b.className='admin-badge on';b.textContent='🔓 관리자 모드';}
+  else{b.className='admin-badge off';b.textContent='🔒 관리자';}
+}
+function requireAdmin(cb){
+  if(isAdmin){cb();return;}
+  pendingAction=cb;
+  document.getElementById('panel-login').style.display='block';
+  document.getElementById('panel-logout').style.display='none';
+  document.getElementById('pw-input').value='';
+  document.getElementById('pw-error').textContent='';
+  document.getElementById('modal-overlay').classList.add('show');
+  setTimeout(()=>document.getElementById('pw-input').focus(),120);
+}
+function confirmAuth(){
+  const pw=document.getElementById('pw-input').value;
+  if(pw===ADMIN_PW){
+    isAdmin=true;
+    sessionStorage.setItem('wc26-admin','1');
+    closeModal();updateBadge();
+    if(pendingAction){pendingAction();pendingAction=null;}
+  }else{
+    document.getElementById('pw-error').textContent='❌ 비밀번호가 틀렸습니다';
+    document.getElementById('pw-input').value='';
+    document.getElementById('pw-input').focus();
+  }
+}
+function closeModal(){document.getElementById('modal-overlay').classList.remove('show');}
+function clickAdminBadge(){
+  if(isAdmin){
+    document.getElementById('panel-login').style.display='none';
+    document.getElementById('panel-logout').style.display='block';
+    document.getElementById('modal-overlay').classList.add('show');
+  }else{
+    requireAdmin(()=>render());
+  }
+}
+function doLogout(){
+  isAdmin=false; sessionStorage.removeItem('wc26-admin');
+  state.edit=false; closeModal(); updateBadge(); render();
+}
+document.getElementById('modal-overlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
+
+/* ── 렌더 ── */
+function render(){
+  const {teams,edit,champ}=state;
+  const totalPeople=teams.reduce((s,t)=>s+t.members.length,0);
+  const totalPaid  =teams.reduce((s,t)=>s+t.members.filter(m=>m.paid).length,0);
+  const pool=totalPeople*FEE;
+
+  let h=`
+  <div class="stats">
+    <div class="stat-box"><div class="stat-label">🏆 총 상금</div><div class="stat-val" style="color:#d97706">${won(pool)}</div></div>
+    <div class="stat-box"><div class="stat-label">✅ 납부 완료</div><div class="stat-val" style="color:#16a34a">${totalPaid} / ${totalPeople}명</div></div>
+    <div class="stat-box"><div class="stat-label">⏳ 미납 (추후)</div><div class="stat-val" style="color:#ea580c">${totalPeople-totalPaid}명</div></div>
+  </div>
+  <div class="info-row">
+    <div class="info-bar">
+      <b style="color:#1d4ed8">○</b> 납부완료 &nbsp;·&nbsp;
+      <b style="color:#ea580c">·</b> 추후납부 &nbsp;—&nbsp;
+      배당금은 <b style="color:#1e2232">전원(${totalPeople}명) 기준</b>으로 계산
+    </div>
+    ${isAdmin
+      ?`<button class="btn-edit${edit?' on':''}" onclick="toggleEdit()">${edit?'✓ 편집 완료':'✎ 명단 편집'}</button>
+        <button class="btn-reset" onclick="requireAdmin(()=>resetAll())">⟲ 초기화</button>`
+      :`<span style="font-size:12px;color:#94a3b8">👁 보기 전용</span>`}
+  </div>
+  <div class="teams">`;
+
+  teams.forEach(t=>{
+    const p=payout(t,pool);
+    const paidCnt=t.members.filter(m=>m.paid).length;
+    const pct=t.members.length?Math.round(paidCnt/t.members.length*100):0;
+    const isChamp=champ===t.id;
+    const progColor=pct===100?'#16a34a':t.accent;
+
+    h+=`
+    <div class="card${isChamp?' is-champ':''}">
+      <div class="card-left">
+        <div class="team-hd">
+          <img class="flag-img" src="${t.flagUrl}" alt="${t.name}" onerror="this.style.display='none'">
+          <div style="flex:1">
+            <div class="team-name">${t.name}</div>
+            <div class="team-sub">총 ${t.members.length}명</div>
+          </div>
+          ${isChamp?'<span class="champ-crown">👑</span>':''}
+        </div>
+        <div class="payout-box" style="background:${t.accentBg};border-color:${t.accentBorder}">
+          <div class="payout-lbl">이 팀이 우승하면 · 1인당</div>
+          <div class="payout-amt" style="color:${t.accent}">${t.members.length?won(p.per):'—'}</div>
+          <div class="payout-sub">${t.members.length?`${p.winners}명 수령 · 귀속 ${won(p.house)}`:'멤버를 추가해주세요'}</div>
+        </div>
+        <div>
+          <div class="prog-head"><span>납부 현황</span><span>${paidCnt}/${t.members.length}명 (${pct}%)</span></div>
+          <div class="prog-bg"><div class="prog-fill" style="width:${pct}%;background:${progColor}"></div></div>
+        </div>
+        <button class="btn-champ"
+          style="background:${isChamp?'#f1f5f9':t.accent};color:${isChamp?'#64748b':'#fff'};border:${isChamp?'1.5px solid #e2e8f0':'none'}"
+          onclick="requireAdmin(()=>toggleChamp('${t.id}'))">${isChamp?'선언 취소':'🏆 우승 선언'}</button>
+      </div>
+      <div class="card-right">
+        <div class="members">
+          ${t.members.length===0?`<span class="empty-msg">${isAdmin?'이름을 추가해주세요':'아직 명단이 없습니다'}</span>`:''}`;
+
+    t.members.forEach((m,i)=>{
+      const cs=m.paid
+        ?`background:${t.accentBg};border-color:${t.accentBorder};color:${t.accent}`
+        :`background:#fff7ed;border-color:#fed7aa;color:#ea580c`;
+      h+=`<span class="chip" style="${cs};${isAdmin?'cursor:pointer':''}"
+        onclick="requireAdmin(()=>togglePaid('${t.id}',${i}))" title="${isAdmin?'클릭하여 납부 토글':'관리자만 변경 가능'}">
+        <span class="chip-mark">${m.paid?'○':'·'}</span>${m.name}
+        ${(edit&&isAdmin)?`<button class="chip-del" onclick="event.stopPropagation();delMember('${t.id}',${i})">✕</button>`:''}
+      </span>`;
+    });
+
+    h+=`</div>`;
+    if(edit&&isAdmin){
+      h+=`<div class="add-row">
+        <input class="add-input" id="add-${t.id}" placeholder="이름 입력 후 Enter"
+          onkeydown="if(event.key==='Enter')addMember('${t.id}')">
+        <button style="background:${t.accent};color:#fff;border:none;border-radius:9px;padding:7px 13px;font-size:13px;font-weight:700"
+          onclick="addMember('${t.id}')">+ 추가</button>
+      </div>`;
+    }
+    h+=`</div></div>`;
+  });
+
+  h+=`</div>`;
+  if(champ){
+    const t=teams.find(x=>x.id===champ);
+    const p=payout(t,pool);
+    h+=`<div class="champ-banner">
+      <div class="champ-banner-title">
+        <img src="${t.flagUrl}" alt="" style="width:22px;height:16px;border-radius:2px;vertical-align:middle;margin-right:6px">
+        ${t.name} 우승 시 최종 정산
+      </div>
+      <div class="champ-banner-main">당첨자 ${p.winners}명 × ${won(p.per)}</div>
+      <div class="champ-banner-sub">총 상금 ${won(pool)} &nbsp;·&nbsp; 지급 ${won(p.per*p.winners)} &nbsp;·&nbsp; 운영진 귀속 ${won(p.house)}</div>
+    </div>`;
+  }
+  h+=`<div class="footer">이름표 클릭 → 납부(○)/미납(·) 토글 (관리자 전용) &nbsp;·&nbsp; 변경 내용 자동 저장<br>⚠️ 배당금은 부서 회식·선물 나눔 용도로 사용하지 않습니다</div>`;
+  document.getElementById('app').innerHTML=h;
+  updateBadge();
+}
+
+/* ── 액션 ── */
+function toggleEdit(){state.edit=!state.edit;render();}
+function toggleChamp(id){state.champ=state.champ===id?null:id;render();}
+function togglePaid(tid,idx){
+  state.teams=state.teams.map(t=>t.id!==tid?t:{...t,members:t.members.map((m,i)=>i===idx?{...m,paid:!m.paid}:m)});
+  save();render();
+}
+function delMember(tid,idx){
+  const name=state.teams.find(t=>t.id===tid).members[idx].name;
+  if(!confirm(`'${name}' 님을 삭제할까요?`))return;
+  state.teams=state.teams.map(t=>t.id!==tid?t:{...t,members:t.members.filter((_,i)=>i!==idx)});
+  save();render();
+}
+function addMember(tid){
+  const input=document.getElementById('add-'+tid);
+  const name=(input?.value||'').trim();
+  if(!name)return;
+  state.teams=state.teams.map(t=>t.id!==tid?t:{...t,members:[...t.members,{name,paid:false}]});
+  save();render();
+  setTimeout(()=>{const el=document.getElementById('add-'+tid);if(el)el.focus();},0);
+}
+function resetAll(){
+  if(!confirm('모든 명단을 초기화할까요?'))return;
+  state={teams:clone(INIT),edit:false,champ:null};
+  localStorage.removeItem(STORE);render();
+}
+render();
+</script>
+</body>
+</html>
