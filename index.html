@@ -131,18 +131,15 @@ button:hover{opacity:.85}
 <script>
 const FEE=10000, STORE='wc26-v4', ADMIN_PW='12345';
 
-const INIT=[
-  {id:'fra',name:'프랑스',    flagUrl:'https://flagcdn.com/w40/fr.png',    accent:'#1d4ed8',accentBg:'#eff6ff',accentBorder:'#bfdbfe', members:[]},
-  {id:'esp',name:'스페인',    flagUrl:'https://flagcdn.com/w40/es.png',    accent:'#b45309',accentBg:'#fffbeb',accentBorder:'#fde68a', members:[]},
-  {id:'eng',name:'잉글랜드',  flagUrl:'https://flagcdn.com/w40/gb-eng.png',accent:'#0f766e',accentBg:'#f0fdfa',accentBorder:'#99f6e4', members:[]},
-  {id:'arg',name:'아르헨티나',flagUrl:'https://flagcdn.com/w40/ar.png',    accent:'#0284c7',accentBg:'#f0f9ff',accentBorder:'#bae6fd', members:[]}
-];
+const INIT=[{"id":"fra","name":"프랑스","flagUrl":"https://flagcdn.com/w40/fr.png","accent":"#1d4ed8","accentBg":"#eff6ff","accentBorder":"#bfdbfe","members":[{"name":"윤중구","paid":true},{"name":"마일현","paid":true},{"name":"김은총","paid":true},{"name":"정지연","paid":true},{"name":"강연지","paid":true},{"name":"이승민","paid":true},{"name":"노임령","paid":false},{"name":"전은진","paid":true},{"name":"유동준","paid":false},{"name":"정종학","paid":true},{"name":"김지영","paid":true},{"name":"전동준","paid":false},{"name":"정가인","paid":true},{"name":"김지혜","paid":false},{"name":"이승미","paid":true},{"name":"홍영준","paid":true},{"name":"원성화","paid":false},{"name":"문민주","paid":true},{"name":"한유빈","paid":true},{"name":"정예원","paid":false},{"name":"고아라","paid":false},{"name":"이보라","paid":true},{"name":"정승기","paid":false},{"name":"김다현","paid":true},{"name":"성민규","paid":true},{"name":"조환규","paid":false},{"name":"정해민","paid":true},{"name":"김다혜","paid":true},{"name":"김혜진","paid":true},{"name":"조규현","paid":true},{"name":"이용훈","paid":true}]},{"id":"esp","name":"스페인","flagUrl":"https://flagcdn.com/w40/es.png","accent":"#b45309","accentBg":"#fffbeb","accentBorder":"#fde68a","members":[{"name":"김계현","paid":true},{"name":"김영우","paid":true},{"name":"장호중","paid":true},{"name":"이용원","paid":true},{"name":"전영남","paid":true},{"name":"최현정","paid":true},{"name":"전진옥","paid":true},{"name":"김지연","paid":true},{"name":"최민준","paid":true},{"name":"조현정","paid":true},{"name":"이원복","paid":true},{"name":"류채린","paid":true}]},{"id":"eng","name":"잉글랜드","flagUrl":"https://flagcdn.com/w40/gb-eng.png","accent":"#0f766e","accentBg":"#f0fdfa","accentBorder":"#99f6e4","members":[{"name":"이영배","paid":true},{"name":"김지원","paid":true},{"name":"이준희","paid":true},{"name":"김경태","paid":true},{"name":"손지혜","paid":true},{"name":"조재석","paid":true},{"name":"이현지","paid":true},{"name":"유인철","paid":false}]},{"id":"arg","name":"아르헨티나","flagUrl":"https://flagcdn.com/w40/ar.png","accent":"#0284c7","accentBg":"#f0f9ff","accentBorder":"#bae6fd","members":[{"name":"허태회","paid":true},{"name":"문병석","paid":true},{"name":"진기명","paid":true},{"name":"박성희","paid":true},{"name":"김석영","paid":true},{"name":"노은빈","paid":true},{"name":"진현석","paid":true},{"name":"김은혜","paid":true},{"name":"최인우","paid":true},{"name":"변지혜","paid":true},{"name":"김세인","paid":false},{"name":"김채연","paid":true},{"name":"강태천","paid":true},{"name":"신현민","paid":false},{"name":"박현석","paid":true},{"name":"최범석","paid":true},{"name":"김혜정","paid":true},{"name":"최용석","paid":false},{"name":"이장건","paid":true},{"name":"이교길","paid":false},{"name":"김규년","paid":true},{"name":"김홍례","paid":true},{"name":"홍성호","paid":false},{"name":"이인애","paid":false}]}];
 
 let state={teams:load()||clone(INIT),edit:false,champ:null};
 let isAdmin=sessionStorage.getItem('wc26-admin')==='1';
 let pendingAction=null;
 
 function load(){try{const v=localStorage.getItem(STORE);return v?JSON.parse(v):null;}catch{return null;}}
+// localStorage 없으면 INIT 데이터 그대로 사용 + localStorage에도 저장
+if(!localStorage.getItem(STORE)){save();}
 function save(){try{localStorage.setItem(STORE,JSON.stringify(state.teams));}catch{}}
 function clone(o){return JSON.parse(JSON.stringify(o));}
 function won(n){return n.toLocaleString('ko-KR')+'원';}
